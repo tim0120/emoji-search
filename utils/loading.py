@@ -13,6 +13,6 @@ def extract_emoji_data(
         else:
             elements = [emoji[element_field] for emoji in data]
     
-    output_file_path = output_file_path or f'./data/emoji-{element_field}s.txt'
+    output_file_path = output_file_path or f'./data/{element_field}s.txt'
     with open(output_file_path, 'w', encoding='utf-8') as file:
         json.dump(elements, file, ensure_ascii=False, indent=2)

@@ -9,16 +9,23 @@ from utils.embed import k_nearest
 def main():
     parser = argparse.ArgumentParser(description="Process one or more string inputs.")
     parser.add_argument('--k', type=int, default=5, help='Number of nearest neighbors to find')
+    parser.add_argument('--emb_type', type=str, default='unicodeName', help='Type of embeddings to use')
     args = parser.parse_args()
 
-    with open('./data/emoji-characters.txt', 'r', encoding='utf-8') as file:
+    with open('./data/characters.txt', 'r', encoding='utf-8') as file:
         emoji_characters = file.read().splitlines()
 
     def get_k_nearest(queries: List[str], k: int) -> List[List[str]]:
         embedder = Embedder()
         query_embeddings = embedder.embed(queries)
 
-        embeddings = torch.load('./data/unicode_name_embeddings.pt', weights_only=True)
+        if args.emb_type == 'unicodeName':
+            embs_path = './data/unicodeName_embeddings.pt'
+        elif args.emb_type == 'alternates':
+            embs_path = './data/alternate_embeddings.pt'
+        else:
+            raise NotImplementedError(f"Embeddings type {args.embs_type} not supported")
+        embeddings = torch.load(embs_path, weights_only=True)
         nearest_idxs = k_nearest(embeddings, query_embeddings, k)
 
         nearest_character_lists = []

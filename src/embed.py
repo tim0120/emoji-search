@@ -8,7 +8,7 @@ from transformers import AutoModel, AutoTokenizer
 class Embedder:
     def __init__(
         self,
-        model_path: str = 'Alibaba-NLP/gte-base-en-v1.5'
+        model_path: str = 'Alibaba-NLP/gte-base-en-v1.5' # embedding dim: 768
     ):
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
         self.model = AutoModel.from_pretrained(model_path, trust_remote_code=True)
