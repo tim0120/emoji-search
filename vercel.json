@@ -1,7 +1,7 @@
 {
   "version": 2,
   "functions": {
-    "api/query.py": {
+    "api/search.py": {
       "memory": 1024,
       "maxDuration": 10
     }
