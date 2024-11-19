@@ -24,7 +24,7 @@ class Embedder:
 			self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 			self.model = AutoModel.from_pretrained(model_path, trust_remote_code=True)
 		self.embeddings = load(
-			f'./data/embeddings/{model_path}/alternate_embeddings_quantized.npz',
+			f'./data/embeddings/{model_path}/unicodeName_embeddings_quantized.npz',
 			allow_pickle=True
 		)['embeddings']
 		if load_emojis:
