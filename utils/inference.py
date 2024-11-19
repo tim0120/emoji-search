@@ -2,10 +2,12 @@ from typing import Union, List, Dict
 
 import litellm
 import numpy as np
-import openai
-import torch
-from torch.nn import functional as F
-from transformers import GenerationConfig, AutoTokenizer, AutoModel
+try:
+	import torch
+	from torch.nn import functional as F
+	from transformers import GenerationConfig, AutoTokenizer, AutoModel
+except:
+	pass
 
 def local_embed(input_texts: List[str], tokenizer: AutoTokenizer, model: AutoModel) -> np.ndarray:
 	with torch.no_grad():
@@ -43,7 +45,7 @@ def api_generate(
 		)
 		new_texts = [r.choices[0].message.content for r in responses]
 
-	except openai.OpenAIError as e:
+	except Exception as e:
 		# Error handling
 		should_retry = litellm._should_retry(e.status_code)
 		print("Error: API failed to respond.", e, f"should_retry: {should_retry}")

@@ -1,13 +1,16 @@
-# Ignore scripts
+# Ignore deployment-irrelevant files
+README.md
 scripts
+utils/*
+!utils/inference.py
+data/embeddings/Alibaba-NLP
+data/emoji-info/*
+!data/emoji-info/characters.txt
 
 # Ignore Python build artifacts
 *.egg
 *.egg-info/
 *.pyc
-
-# Ignore specific scripts
-scripts/test.py
 
 # Node modules (if applicable)
 node_modules

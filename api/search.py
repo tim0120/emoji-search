@@ -3,7 +3,8 @@ from urllib.parse import unquote
 
 from src.embedder import Embedder
 
-embedder = Embedder()
+embedder = Embedder(model_path="mixedbread-ai/mxbai-embed-large-v1")
+emoji_characters = open('./data/emoji-info/characters.txt', 'r', encoding='utf-8').read().splitlines()
 
 def handler(request):
     query = request.query.get("query")
@@ -24,7 +25,8 @@ def handler(request):
     try:
         query = unquote(query)
         query_embedding = embedder.embed(query)
-        results = embedder.k_nearest(query_embedding, 10, emb_type)
+        idxs = embedder.k_nearest(query_embedding, 10, emb_type)
+        results = [emoji_characters[idx] for idx in idxs]
         
         return {
             "statusCode": 200,
