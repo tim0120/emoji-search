@@ -3,6 +3,9 @@
 *.pyc
 
 scripts/test.py
+scripts/test2.py
 
 **/*.npy
 **/*.pt
+
+/.env

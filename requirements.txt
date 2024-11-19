@@ -1,3 +1,4 @@
-litellm==1.52.10
+python-dotenv==1.0.1
+litellm[huggingface]==1.52.10
 numpy==1.26.4
-setuptools==68.2.2
+requests==2.31.0
