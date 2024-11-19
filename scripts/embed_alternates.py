@@ -62,5 +62,9 @@ def main():
             np.save(alternate_embs_path, embeddings)
             embeddings = []
 
+    existing_embeddings = np.load(alternate_embs_path, allow_pickle=True)
+    embeddings = np.concatenate((existing_embeddings, embeddings), axis=0)
+    np.save(alternate_embs_path, embeddings)
+
 if __name__ == '__main__':
     main()
