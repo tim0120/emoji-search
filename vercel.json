@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "functions": {
+    "api/query.py": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/search",
+      "dest": "/api/search.py"
+    }
+  ]
+}
