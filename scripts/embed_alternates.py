@@ -43,7 +43,13 @@ def main():
 
     batch_size = 32
     embeddings = []
-    for idx, inputs in enumerate(tqdm(inputs_lists, desc="Embedding inputs")):
+    # Restarts for API failures and HF rate limits :P
+    try:
+        existing_embeddings = np.load(alternate_embs_path, allow_pickle=True)
+        start_idx = existing_embeddings.shape[0]
+    except:
+        start_idx = 0
+    for idx, inputs in enumerate(tqdm(inputs_lists[start_idx:], desc="Embedding inputs")):
         embeddings.append(batch_embed(inputs, embedder))
         # Save periodically and at end
         if (idx + 1) % batch_size == 0 or (idx + 1) == len(inputs_lists):
