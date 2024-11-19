@@ -23,7 +23,10 @@ class Embedder:
 		if load_locally:
 			self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 			self.model = AutoModel.from_pretrained(model_path, trust_remote_code=True)
-		self.embeddings = np.load(f'./data/embeddings/{model_path}/alternate_embeddings.npy', allow_pickle=True)
+		self.embeddings = np.load(
+			f'./data/embeddings/{model_path}/alternate_embeddings_quantized.npz',
+			allow_pickle=True
+		)['embeddings']
 		if load_emojis:
 			with open('./data/emoji-info/characters.txt', 'r', encoding='utf-8') as file:
 				self.emoji_characters = file.read().splitlines()
@@ -41,6 +44,6 @@ class Embedder:
 		elif len(self.embeddings.shape) == 3:
 			similarities = np.einsum('ijk,lk->il', self.embeddings, queries)
 		else:
-			raise NotImplementedError("Only 2D and 3D embeddings are supported")
+			raise NotImplementedError('Only 2D and 3D embeddings are supported')
 		topk_indices = np.argsort(-similarities, axis=0)[:k]
 		return topk_indices.flatten().tolist()
