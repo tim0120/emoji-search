@@ -32,8 +32,8 @@ def save_alternates(num_alternates: int, batch_size: int = 32) -> None:
         num_alternates (int): Number of alternate descriptions to generate per emoji
         batch_size (int): Number of emojis to process in each batch before saving
     """
-    alternates_path = './data/alternate-descriptions.json'
-    progress_path = './data/processing_progress.json'
+    alternates_path = './data/emoji-info/alternate-descriptions.json'
+    progress_path = './data/emoji-info/processing_progress.json'
     os.makedirs(os.path.dirname(alternates_path), exist_ok=True)
     
     # Load or initialize processing progress

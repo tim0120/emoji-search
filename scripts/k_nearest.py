@@ -3,16 +3,17 @@ from typing import List
 
 import torch
 
-from src.embed import Embedder
+from src.embedder import Embedder
 from utils.embed import k_nearest
 
 def main():
     parser = argparse.ArgumentParser(description="Process one or more string inputs.")
     parser.add_argument('--k', type=int, default=5, help='Number of nearest neighbors to find')
     parser.add_argument('--emb_type', type=str, default='unicodeName', help='Type of embeddings to use')
+    parser.add_argument('--model_path', type=str, default='Alibaba-NLP/gte-base-en-v1.5', help='Path to the model to use for embedding')
     args = parser.parse_args()
 
-    with open('./data/characters.txt', 'r', encoding='utf-8') as file:
+    with open('./data/emoji-info/characters.txt', 'r', encoding='utf-8') as file:
         emoji_characters = file.read().splitlines()
 
     def get_k_nearest(queries: List[str], k: int) -> List[List[str]]:
@@ -20,9 +21,9 @@ def main():
         query_embeddings = embedder.embed(queries)
 
         if args.emb_type == 'unicodeName':
-            embs_path = './data/unicodeName_embeddings.pt'
+            embs_path = f'./data/{args.model_path}/unicodeName_embeddings.pt'
         elif args.emb_type == 'alternates':
-            embs_path = './data/alternate_embeddings.pt'
+            embs_path = f'./data/{args.model_path}/alternate_embeddings.pt'
         else:
             raise NotImplementedError(f"Embeddings type {args.embs_type} not supported")
         embeddings = torch.load(embs_path, weights_only=True)

@@ -1,26 +1,26 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 
-import torch
+import numpy as np
 
-from src.embed import Embedder
+from src.embedder import Embedder
 
-def batch_embed(inputs: List[str], embedder: Optional[Embedder] = None, bs: int = 16) -> torch.Tensor:
-    if not embedder:
-        embedder = Embedder()
-    embeddings = []
-    for i in range(0, len(inputs), bs):
-        embeddings.append(embedder.embed(inputs[i:i+bs]))
-    embeddings = torch.cat(embeddings, dim=0)
-    return embeddings
+def batch_embed(inputs: List[str], embedder: Optional[Embedder] = None, bs: int = 16) -> np.ndarray:
+	if not embedder:
+		embedder = Embedder()
+	embeddings = []
+	for i in range(0, len(inputs), bs):
+		embeddings.append(embedder.embed(inputs[i:i+bs]))
+	embeddings = np.concatenate(embeddings, axis=0)
+	return embeddings
 
-def k_nearest(embeddings: torch.Tensor, queries: torch.Tensor, k: int) -> torch.Tensor:
-    if len(embeddings.shape) == 2:
-        similarities = torch.einsum('ij,kj->ik', embeddings, queries)
-        topk = torch.topk(similarities, k=k, dim=0)
-        return topk.indices
-    elif len(embeddings.shape) == 3:
-        similarities = torch.einsum('ijk,lk->il', embeddings, queries)
-        topk = torch.topk(similarities, k=k, dim=0)
-        return topk.indices
-    else:
-        raise NotImplementedError("Only 2D and 3D embeddings are supported")
+def k_nearest(embeddings: np.ndarray, queries: np.ndarray, k: int) -> np.ndarray:
+	if len(embeddings.shape) == 2:
+		similarities = np.dot(embeddings, queries.T)
+		topk_indices = np.argsort(-similarities, axis=0)[:k]
+		return topk_indices
+	elif len(embeddings.shape) == 3:
+		similarities = np.einsum('ijk,lk->il', embeddings, queries)
+		topk_indices = np.argsort(-similarities, axis=0)[:k]
+		return topk_indices
+	else:
+		raise NotImplementedError("Only 2D and 3D embeddings are supported")

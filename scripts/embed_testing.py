@@ -1,6 +1,6 @@
 from transformers import AutoModel, AutoTokenizer
 
-from src.embed import Embedder
+from src.embedder import Embedder
 
 input_texts = [
     "hey",
