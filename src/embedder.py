@@ -2,13 +2,8 @@ from typing import List
 from numpy import ndarray, load, dot, einsum, argsort
 from utils.inference import api_embed
 
-try:
-	from transformers import AutoModel, AutoTokenizer
-	from utils.inference import local_embed
-except:
-	AutoModel = None
-	AutoTokenizer = None
-	local_embed = None
+from transformers import AutoModel, AutoTokenizer
+from utils.inference import local_embed
 
 
 class Embedder:
@@ -26,8 +21,7 @@ class Embedder:
 			self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 			self.model = AutoModel.from_pretrained(model_path, trust_remote_code=True)
 		self.embeddings = load(
-			f'./data/embeddings/{model_path}/unicodeName_embeddings_quantized.npz',
-			allow_pickle=True
+			f'./data/embeddings/{model_path}/unicodeName_embeddings_quantized.npz', allow_pickle=True
 		)['embeddings']
 		if load_emojis:
 			with open('./data/emoji-info/characters.txt', 'r', encoding='utf-8') as file:

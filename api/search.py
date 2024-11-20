@@ -4,12 +4,13 @@ import os
 from urllib.parse import parse_qs, urlparse
 
 from dotenv import load_dotenv
+from numpy import argsort, dot, einsum, load
 import requests
 
-from src.embedder import Embedder
-
-
-embedder = Embedder(model_path="mixedbread-ai/mxbai-embed-large-v1")
+model_path = "mixedbread-ai/mxbai-embed-large-v1"
+embeddings = load(
+    f'./data/embeddings/{model_path}/unicodeName_embeddings_quantized.npz', allow_pickle=True
+)['embeddings']
 emoji_characters = open('./data/emoji-info/characters.txt', 'r', encoding='utf-8').read().splitlines()
 
 load_dotenv()
@@ -35,6 +36,16 @@ def get_embeddings(text):
             return {"error": str(e)}
     return {"error": "Max retries reached while waiting for model to load"}
     
+def k_nearest(embeddings, queries, k):
+    if len(embeddings.shape) == 2:
+        similarities = dot(embeddings, queries.T)
+    elif len(embeddings.shape) == 3:
+        similarities = einsum('ijk,lk->il', embeddings, queries)
+    else:
+        raise NotImplementedError('Only 2D and 3D embeddings are supported')
+    topk_indices = argsort(-similarities, axis=0)[:k]
+    return topk_indices.flatten().tolist()
+
 def handle_request(query_params):
     query = query_params.get('query', [None])[0]
     emb_type = query_params.get('emb_type', ['alternates'])[0]
@@ -53,7 +64,7 @@ def handle_request(query_params):
     
     try:
         query_embedding = get_embeddings(query)[0]
-        idxs = embedder.k_nearest(query_embedding, 10, emb_type)
+        idxs = k_nearest(query_embedding, 10, emb_type)
         results = [emoji_characters[idx] for idx in idxs]
         return {
             "statusCode": 200,

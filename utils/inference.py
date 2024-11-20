@@ -2,16 +2,9 @@ from typing import Union, List, Dict
 
 import litellm
 import numpy as np
-try:
-	import torch
-	from torch.nn import functional as F
-	from transformers import GenerationConfig, AutoTokenizer, AutoModel
-except:
-	torch = None
-	F = None
-	GenerationConfig = None
-	AutoTokenizer = None
-	AutoModel = None
+import torch
+from torch.nn import functional as F
+from transformers import GenerationConfig, AutoTokenizer, AutoModel
 
 def local_embed(input_texts: List[str], tokenizer: AutoTokenizer, model: AutoModel) -> np.ndarray:
 	with torch.no_grad():
