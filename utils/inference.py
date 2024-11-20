@@ -7,7 +7,11 @@ try:
 	from torch.nn import functional as F
 	from transformers import GenerationConfig, AutoTokenizer, AutoModel
 except:
-	pass
+	torch = None
+	F = None
+	GenerationConfig = None
+	AutoTokenizer = None
+	AutoModel = None
 
 def local_embed(input_texts: List[str], tokenizer: AutoTokenizer, model: AutoModel) -> np.ndarray:
 	with torch.no_grad():
