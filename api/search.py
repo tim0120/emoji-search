@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler
 from json import dumps
 import os
+import time
 from urllib.parse import parse_qs, urlparse
 
 from dotenv import load_dotenv
@@ -30,6 +31,7 @@ def get_embeddings(text):
             # Check if we got a loading error
             if isinstance(response, dict) and "error" in response and "loading" in response["error"].lower():
                 retry_count += 1
+                time.sleep(2)
                 continue
             return response
         except requests.exceptions.RequestException as e:
