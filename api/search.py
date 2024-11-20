@@ -4,7 +4,7 @@ import os
 from urllib.parse import parse_qs, urlparse
 
 from dotenv import load_dotenv
-from numpy import argsort, dot, einsum, load
+from numpy import argsort, array, dot, einsum, load
 import requests
 
 model_path = "mixedbread-ai/mxbai-embed-large-v1"
@@ -36,7 +36,7 @@ def get_embeddings(text):
             return {"error": str(e)}
     return {"error": "Max retries reached while waiting for model to load"}
     
-def k_nearest(embeddings, queries, k):
+def k_nearest(queries, k):
     if len(embeddings.shape) == 2:
         similarities = dot(embeddings, queries.T)
     elif len(embeddings.shape) == 3:
@@ -63,8 +63,14 @@ def handle_request(query_params):
         }
     
     try:
-        query_embedding = get_embeddings(query)[0]
-        idxs = k_nearest(query_embedding, 10, emb_type)
+        response = get_embeddings(query)
+        if isinstance(response, dict) and "error" in response:
+            return {
+                "statusCode": 500,
+                "body": response["error"]
+            }
+        query_embedding = array(response)
+        idxs = k_nearest(query_embedding, 10)
         results = [emoji_characters[idx] for idx in idxs]
         return {
             "statusCode": 200,
