@@ -6,7 +6,9 @@ try:
 	from transformers import AutoModel, AutoTokenizer
 	from utils.inference import local_embed
 except:
-	AutoModel = AutoTokenizer = None
+	AutoModel = None
+	AutoTokenizer = None
+	local_embed = None
 
 
 class Embedder:
