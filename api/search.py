@@ -24,8 +24,8 @@ def get_embeddings(text):
         return response.json()
     # Handle model loading
     retry_count = 0
-    max_wait_time = 10 #seconds
-    sleep_time = 0.25
+    max_wait_time = 10 # seconds
+    sleep_time = 0.1 # seconds
     max_retries = max_wait_time / sleep_time
     while retry_count < max_retries:
         try:
