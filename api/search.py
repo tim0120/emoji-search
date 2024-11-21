@@ -24,14 +24,16 @@ def get_embeddings(text):
         return response.json()
     # Handle model loading
     retry_count = 0
-    max_retries = 5
+    max_wait_time = 10 #seconds
+    sleep_time = 0.25
+    max_retries = max_wait_time / sleep_time
     while retry_count < max_retries:
         try:
             response = query()
             # Check if we got a loading error
             if isinstance(response, dict) and "error" in response and "loading" in response["error"].lower():
                 retry_count += 1
-                time.sleep(2)
+                time.sleep(sleep_time)
                 continue
             return response
         except requests.exceptions.RequestException as e:
