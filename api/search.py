@@ -8,16 +8,16 @@ from dotenv import load_dotenv
 from numpy import argsort, array, dot, einsum, load
 import requests
 
-model_path = "mixedbread-ai/mxbai-embed-large-v1"
+load_dotenv()
+
+model_path = os.getenv('MODEL_PATH')
 embeddings = load(
     f'./data/embeddings/{model_path}/unicodeName_embeddings_quantized.npz', allow_pickle=True
 )['embeddings']
 emoji_characters = open('./data/emoji-info/characters.txt', 'r', encoding='utf-8').read().splitlines()
 
-load_dotenv()
-
 def get_embeddings(text):
-    API_URL = "https://api-inference.huggingface.co/models/mixedbread-ai/mxbai-embed-large-v1"
+    API_URL = f"https://api-inference.huggingface.co/models/{model_path}"
     headers = {"Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY')}"}
     def query():
         response = requests.post(API_URL, headers=headers, json={"inputs": [text]})
