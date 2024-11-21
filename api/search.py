@@ -74,7 +74,7 @@ def handle_request(query_params):
                 "body": response["error"]
             }
         query_embedding = array(response)
-        idxs = k_nearest(query_embedding, 10)
+        idxs = k_nearest(query_embedding, os.getenv('K'))
         results = [emoji_characters[idx] for idx in idxs]
         return {
             "statusCode": 200,
