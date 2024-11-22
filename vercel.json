@@ -6,7 +6,7 @@
       "maxDuration": 10
     }
   },
-  "routes": [
+  "rewrites": [
     {
       "src": "/api/search",
       "dest": "/api/search.py"
