@@ -8,7 +8,7 @@
   },
   "rewrites": [
     {
-      "src": "/api/search",
+      "source": "/api/search",
       "destination": "/api/search.py"
     }
   ],
