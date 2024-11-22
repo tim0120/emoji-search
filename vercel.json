@@ -9,7 +9,7 @@
   "rewrites": [
     {
       "src": "/api/search",
-      "dest": "/api/search.py"
+      "destination": "/api/search.py"
     }
   ],
   "headers": [
