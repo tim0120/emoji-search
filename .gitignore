@@ -6,6 +6,8 @@ scripts/test.py
 scripts/test2.py
 
 **/*.npy
+**/*.npz
 **/*.pt
+!data/embeddings/openai/**
 
 /.env
