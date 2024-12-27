@@ -10,7 +10,8 @@ import requests
 
 load_dotenv()
 
-model_id = "text-embedding-3-small"
+model_id = "openai/text-embedding-3-small"
+model_name = model_id.split('/')[-1]
 embeddings = load(
     f'./data/embeddings/{model_id}/unicodeNames.npz', allow_pickle=True
 )['embeddings']
@@ -31,7 +32,7 @@ def get_embeddings(text, max_retries=3, initial_delay=1):
                 headers=headers,
                 json={
                     "input": text,
-                    "model": model_id
+                    "model": model_name
                 }
             )
             response.raise_for_status()
