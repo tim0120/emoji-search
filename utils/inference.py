@@ -1,3 +1,4 @@
+import os
 from typing import Union, List, Dict
 
 import litellm
@@ -50,7 +51,7 @@ def api_generate(
 
 	return new_texts
 
-def api_embed(input: Union[str, List[str]], model: str, is_hf_model: bool = True) -> np.ndarray:
+def api_embed(input: Union[str, List[str]], model: str, is_hf_model: bool = False) -> np.ndarray:
 	"""
 	This is a helper function to get text embeddings using various LLM APIs
 	with built in error-handling.
@@ -58,7 +59,8 @@ def api_embed(input: Union[str, List[str]], model: str, is_hf_model: bool = True
 	litellm.suppress_debug_info = True
 	input = [input] if isinstance(input, str) else input
 	try:
-		# Attempt batched embedding call with litellm
+		if 'openai/' in model:
+			model = model.split('/')[1]
 		if is_hf_model:
 			model = f"huggingface/{model}"
 		data = litellm.embedding(model=model, input=input, num_retries=10).data

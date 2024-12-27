@@ -10,36 +10,38 @@ import requests
 
 load_dotenv()
 
-model_path = os.getenv('MODEL_PATH')
+model_id = os.getenv('MODEL_ID')
 embeddings = load(
-    f'./data/embeddings/{model_path}/unicodeName_embeddings_quantized.npz', allow_pickle=True
+    f'./data/embeddings/{model_id}/unicodeNames.npz', allow_pickle=True
 )['embeddings']
 emoji_characters = open('./data/emoji-info/characters.txt', 'r', encoding='utf-8').read().splitlines()
 
-def get_embeddings(text):
-    API_URL = f"https://api-inference.huggingface.co/models/{model_path}"
-    headers = {"Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY')}"}
-    def query():
-        response = requests.post(API_URL, headers=headers, json={"inputs": [text]})
-        return response.json()
-    # Handle model loading
-    retry_count = 0
-    max_wait_time = 10 # seconds
-    sleep_time = 0.1 # seconds
-    max_retries = max_wait_time / sleep_time
-    while retry_count < max_retries:
-        try:
-            response = query()
-            # Check if we got a loading error
-            if isinstance(response, dict) and "error" in response and "loading" in response["error"].lower():
-                retry_count += 1
-                time.sleep(sleep_time)
-                continue
-            return response
-        except requests.exceptions.RequestException as e:
-            return {"error": str(e)}
-    return {"error": "Max retries reached while waiting for model to load"}
+def get_embeddings(text, max_retries=3, initial_delay=1):
+    API_URL = "https://api.openai.com/v1/embeddings"
+    headers = {
+        "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
+        "Content-Type": "application/json"
+    }
     
+    delay = initial_delay
+    for attempt in range(max_retries):
+        try:
+            response = requests.post(
+                API_URL,
+                headers=headers,
+                json={
+                    "input": text,
+                    "model": "text-embedding-3-small"
+                }
+            )
+            response.raise_for_status()
+            return response.json()["data"][0]["embedding"]
+        except requests.exceptions.RequestException as e:
+            if attempt == max_retries - 1:  # Last attempt
+                return {"error": str(e)}
+            time.sleep(delay)
+            delay *= 2  # Exponential backoff
+
 def k_nearest(queries, k):
     if len(embeddings.shape) == 2:
         similarities = dot(embeddings, queries.T)

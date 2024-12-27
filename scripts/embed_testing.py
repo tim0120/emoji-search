@@ -12,6 +12,6 @@ input_texts = [
     "cat"
 ]
 
-embedder = Embedder()
+embedder = Embedder(model_id='text-embedding-3-small')
 embeddings = embedder.embed(input_texts)
 breakpoint()
