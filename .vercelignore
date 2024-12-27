@@ -1,10 +1,10 @@
 # Ignore deployment-irrelevant files
 README.md
-scripts
-utils/*
-!utils/inference.py
-data/embeddings/Alibaba-NLP
-data/emoji-info/*
+src/
+scripts/
+utils/
+data/
+!data/embeddings/openai/
 !data/emoji-info/characters.txt
 
 # Ignore Python build artifacts

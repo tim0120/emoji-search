@@ -10,7 +10,7 @@ import requests
 
 load_dotenv()
 
-model_id = os.getenv('MODEL_ID')
+model_id = "text-embedding-3-small"
 embeddings = load(
     f'./data/embeddings/{model_id}/unicodeNames.npz', allow_pickle=True
 )['embeddings']
@@ -31,7 +31,7 @@ def get_embeddings(text, max_retries=3, initial_delay=1):
                 headers=headers,
                 json={
                     "input": text,
-                    "model": "text-embedding-3-small"
+                    "model": model_id
                 }
             )
             response.raise_for_status()
