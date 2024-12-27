@@ -4,7 +4,7 @@ src/
 scripts/
 utils/
 data/
-!data/embeddings/openai/
+!data/embeddings/openai/text-embedding-3-small/*.npz
 !data/emoji-info/characters.txt
 
 # Ignore Python build artifacts
