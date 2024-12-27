@@ -1,10 +1,25 @@
-# Ignore deployment-irrelevant files
 /*
+!api/
+!data/
 !vercel.json
 !requirements.txt
 !setup.py
+
+# Restrict to specific files in allowed directories
+api/*
 !api/search.py
+
+data/*
+!data/embeddings/
+data/embeddings/*
+!data/embeddings/openai/
+data/embeddings/openai/*
+!data/embeddings/openai/text-embedding-3-small/
+data/embeddings/openai/text-embedding-3-small/*
 !data/embeddings/openai/text-embedding-3-small/unicodeNames.npz
+
+!data/emoji-info/
+data/emoji-info/*
 !data/emoji-info/characters.txt
 
 # Ignore Python build artifacts
