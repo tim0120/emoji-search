@@ -1,10 +1,10 @@
 # Ignore deployment-irrelevant files
-README.md
-src/
-scripts/
-utils/
-data/
-!data/embeddings/openai/text-embedding-3-small/*.npz
+/*
+!vercel.json
+!requirements.txt
+!setup.py
+!api/search.py
+!data/embeddings/openai/text-embedding-3-small/unicodeNames.npz
 !data/emoji-info/characters.txt
 
 # Ignore Python build artifacts
