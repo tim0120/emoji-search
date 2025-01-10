@@ -1,12 +1,13 @@
 from http.server import BaseHTTPRequestHandler
 from json import dumps
-import os
-import time
+from os import getenv
+from time import sleep
 from urllib.parse import parse_qs, urlparse
 
 from dotenv import load_dotenv
 from numpy import argsort, array, dot, einsum, load
-import requests
+from requests import post
+from requests.exceptions import RequestException
 
 load_dotenv()
 
@@ -20,14 +21,14 @@ emoji_characters = open('./data/emoji-info/characters.txt', 'r', encoding='utf-8
 def get_embeddings(text, max_retries=3, initial_delay=1):
     API_URL = "https://api.openai.com/v1/embeddings"
     headers = {
-        "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
+        "Authorization": f"Bearer {getenv('OPENAI_API_KEY')}",
         "Content-Type": "application/json"
     }
     
     delay = initial_delay
     for attempt in range(max_retries):
         try:
-            response = requests.post(
+            response = post(
                 API_URL,
                 headers=headers,
                 json={
@@ -37,10 +38,10 @@ def get_embeddings(text, max_retries=3, initial_delay=1):
             )
             response.raise_for_status()
             return response.json()["data"][0]["embedding"]
-        except requests.exceptions.RequestException as e:
+        except RequestException as e:
             if attempt == max_retries - 1:  # Last attempt
                 return {"error": str(e)}
-            time.sleep(delay)
+            sleep(delay)
             delay *= 2  # Exponential backoff
 
 def k_nearest(queries, k):
@@ -77,7 +78,7 @@ def handle_request(query_params):
                 "body": response["error"]
             }
         query_embedding = array(response)
-        idxs = k_nearest(query_embedding, int(os.getenv('K_NEAREST')))
+        idxs = k_nearest(query_embedding, int(getenv('K_NEAREST')))
         results = [emoji_characters[idx] for idx in idxs]
         return {
             "statusCode": 200,
