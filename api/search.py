@@ -13,7 +13,7 @@ load_dotenv()
 
 model_name = 'text-embedding-3-small'
 embeddings = load('./data/deployment/openai-unicodeNames-embeddings.npz', allow_pickle=True)['embeddings']
-emoji_head = load('./data/deployment/emoji_head.npz', allow_pickle=True)
+emoji_head = load('./data/deployment/emoji_head/model_weights.npz', allow_pickle=True)
 emoji_characters = open('./data/deployment/characters.txt', 'r', encoding='utf-8').read().splitlines()
 
 def get_embeddings(text, max_retries=3, initial_delay=1):
