@@ -36,12 +36,14 @@ class Embedder:
 			embeddings.append(batch_embs)
 		return np.concatenate(embeddings, axis=0) if len(embeddings) > 1 else embeddings[0]
 
-	def k_nearest(self, embeddings: np.ndarray, queries: np.ndarray, k: int) -> List[int]:
+	def k_nearest(self, embeddings: np.ndarray, queries: np.ndarray, k: int, return_scores: bool = False) -> List[int]:
 		if len(embeddings.shape) == 2:
 			similarities = np.dot(embeddings, queries.T)
 		elif len(embeddings.shape) == 3:
 			similarities = np.einsum('ijk,lk->il', embeddings, queries)
 		else:
 			raise NotImplementedError('Only 2D and 3D embeddings are supported')
+		if return_scores:
+			return similarities
 		topk_indices = np.argsort(-similarities, axis=0)[:k].T
 		return topk_indices.tolist()

@@ -17,18 +17,21 @@ def local_embed(input_texts: List[str], tokenizer: AutoTokenizer, model: AutoMod
 	return embeddings
 
 def api_generate(
-	prompts: Union[List[str], List[List[Dict[str, str]]]],
+	prompts: Union[str, List[str], List[List[Dict[str, str]]]],
 	model: str,
 	generation_config: GenerationConfig = GenerationConfig(
-		max_new_tokens=2048
+		max_new_tokens=4096
 	),
-	num_retries: int = 4,
+	num_retries: int = 5,
 ) -> List[str]:
 	"""
 	This is a helper function to make it easy to generate using various LLM APIs
 	(e.g. OpenAI, Anthropic, etc.) with built in error-handling.
 	"""
 	litellm.suppress_debug_info = True
+	# Convert single string prompt to list format
+	if isinstance(prompts, str):
+		prompts = [prompts]
 	# If we pass a list of prompts, convert to message format
 	if isinstance(prompts[0], str):
 		prompts = [[{"role": "user", "content": p}] for p in prompts]
@@ -50,8 +53,12 @@ def api_generate(
 		new_texts = []
 
 	return new_texts
-
-def api_embed(input: Union[str, List[str]], model: str, is_hf_model: bool = False) -> np.ndarray:
+def api_embed(
+		input: Union[str, List[str]],
+		model: str,
+		is_hf_model: bool = False,
+		num_retries: int = 5
+	) -> np.ndarray:
 	"""
 	This is a helper function to get text embeddings using various LLM APIs
 	with built in error-handling.
@@ -63,7 +70,7 @@ def api_embed(input: Union[str, List[str]], model: str, is_hf_model: bool = Fals
 			model = model.split('/')[1]
 		if is_hf_model:
 			model = f"huggingface/{model}"
-		data = litellm.embedding(model=model, input=input, num_retries=10).data
+		data = litellm.embedding(model=model, input=input, num_retries=num_retries).data
 		embeddings = [datum['embedding'] for datum in data]
 
 	except Exception as e:
