@@ -36,7 +36,7 @@ def convert_to_numpy(model):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_path', type=str, default='wandb/latest-run/files/best_emoji_head.pt', help='Path to .pt model file')
-    parser.add_argument('--output_dir', type=str, default='data/deployment/emoji_head.npz', help='Directory to save numpy weights')
+    parser.add_argument('--output_dir', type=str, default='data/deployment/', help='Directory to save numpy weights')
     args = parser.parse_args()
 
     # Load the model

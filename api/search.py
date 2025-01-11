@@ -13,7 +13,7 @@ load_dotenv()
 
 model_name = 'text-embedding-3-small'
 embeddings = load('./data/deployment/openai-unicodeNames-embeddings.npz', allow_pickle=True)['embeddings']
-emoji_head = load('./data/deployment/emoji_head/model_weights.npz', allow_pickle=True)
+model_weights = load('./data/deployment/model_weights.npz', allow_pickle=True)
 emoji_characters = open('./data/deployment/characters.txt', 'r', encoding='utf-8').read().splitlines()
 
 def get_embeddings(text, max_retries=3, initial_delay=1):
@@ -62,7 +62,7 @@ def numpy_inference(x, weights):  # x shape: (input_dim,)
     return x
 
 def get_nearest_idxs(query_embedding, k):
-    probs = numpy_inference(query_embedding, emoji_head)
+    probs = numpy_inference(query_embedding, model_weights)
     similarities = dot(embeddings, query_embedding.T)
     
     # Normalize probabilities and similarities to [0,1] range
