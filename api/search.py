@@ -97,7 +97,8 @@ def handle_request(query_params):
         if isinstance(response, dict) and "error" in response:
             return {
                 "statusCode": 500,
-                "body": response["error"]
+                "body": dumps({"error": response["error"]}),
+                "headers": {"Content-Type": "application/json"}
             }
         query_embedding = array(response)
         idxs = get_nearest_idxs(query_embedding, int(getenv('K_NEAREST')))
@@ -113,7 +114,8 @@ def handle_request(query_params):
     except Exception as e:
         return {
             "statusCode": 500,
-            "body": str(e)
+            "body": dumps({"error": str(e)}),
+            "headers": {"Content-Type": "application/json"}
         }
 
 class handler(BaseHTTPRequestHandler):
