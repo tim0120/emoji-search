@@ -10,11 +10,9 @@ api/*
 !api/search.py
 
 data/*
-!data/deployment/*
-
-!data/emoji-info/
-data/emoji-info/*
-!data/emoji-info/characters.txt
+!data/deployment/openai-unicodeNames-embeddings.npz
+!data/deployment/emoji_head.npz
+!data/deployment/characters.txt
 
 # Ignore Python build artifacts
 *.egg
