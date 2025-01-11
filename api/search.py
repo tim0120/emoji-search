@@ -14,7 +14,7 @@ load_dotenv()
 model_name = 'text-embedding-3-small'
 embeddings = load('./data/deployment/openai-unicodeNames-embeddings.npz', allow_pickle=True)['embeddings']
 emoji_head = load('./data/deployment/emoji_head.npz', allow_pickle=True)
-emoji_characters = open('./data/emoji-info/characters.txt', 'r', encoding='utf-8').read().splitlines()
+emoji_characters = open('./data/deployment/characters.txt', 'r', encoding='utf-8').read().splitlines()
 
 def get_embeddings(text, max_retries=3, initial_delay=1):
     API_URL = "https://api.openai.com/v1/embeddings"
