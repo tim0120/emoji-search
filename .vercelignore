@@ -13,8 +13,7 @@
 !data/deployment/
 !data/deployment/characters.txt
 !data/deployment/openai-unicodeNames-embeddings.npz
-!data/deployment/emoji_head.npz/
-!data/deployment/emoji_head.npz/model_weights.npz
+!data/deployment/model_weights.npz
 
 # Ignore Python build artifacts
 *.egg
