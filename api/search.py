@@ -5,17 +5,15 @@ from time import sleep
 from urllib.parse import parse_qs, urlparse
 
 from dotenv import load_dotenv
-from numpy import argsort, array, dot, einsum, load
+from numpy import argsort, array, dot, load, maximum, sqrt, exp
 from requests import post
 from requests.exceptions import RequestException
 
 load_dotenv()
 
-model_id = "openai/text-embedding-3-small"
-model_name = model_id.split('/')[-1]
-embeddings = load(
-    f'./data/embeddings/{model_id}/unicodeNames.npz', allow_pickle=True
-)['embeddings']
+model_name = 'text-embedding-3-small'
+embeddings = load('./data/deployment/openai-unicodeNames-embeddings.npz', allow_pickle=True)['embeddings']
+emoji_head = load('./data/deployment/emoji_head.npz', allow_pickle=True)
 emoji_characters = open('./data/emoji-info/characters.txt', 'r', encoding='utf-8').read().splitlines()
 
 def get_embeddings(text, max_retries=3, initial_delay=1):
@@ -44,14 +42,38 @@ def get_embeddings(text, max_retries=3, initial_delay=1):
             sleep(delay)
             delay *= 2  # Exponential backoff
 
-def k_nearest(queries, k):
-    if len(embeddings.shape) == 2:
-        similarities = dot(embeddings, queries.T)
-    elif len(embeddings.shape) == 3:
-        similarities = einsum('ijk,lk->il', embeddings, queries)
-    else:
-        raise NotImplementedError('Only 2D and 3D embeddings are supported')
-    topk_indices = argsort(-similarities, axis=0)[:k]
+def numpy_inference(x, weights):  # x shape: (input_dim,)
+    # Layer 1
+    x = dot(weights['layer1']['weight'], x) + weights['layer1']['bias']
+    x = (x - weights['layer1']['bn_mean']) / sqrt(weights['layer1']['bn_var'] + 1e-5)
+    x = weights['layer1']['bn_weight'] * x + weights['layer1']['bn_bias']
+    x = maximum(0, x)  # ReLU
+    
+    # Layer 2
+    x = dot(weights['layer2']['weight'], x) + weights['layer2']['bias']
+    x = (x - weights['layer2']['bn_mean']) / sqrt(weights['layer2']['bn_var'] + 1e-5)
+    x = weights['layer2']['bn_weight'] * x + weights['layer2']['bn_bias']
+    x = maximum(0, x)  # ReLU
+    
+    # Layer 3
+    x = dot(weights['layer3']['weight'], x) + weights['layer3']['bias']
+    x = 1/(1 + exp(-x))  # Sigmoid
+    
+    return x
+
+def get_nearest_idxs(query_embedding, k):
+    probs = numpy_inference(query_embedding, emoji_head)
+    similarities = dot(embeddings, query_embedding.T)
+    
+    # Normalize probabilities and similarities to [0,1] range
+    norm_probs = (probs - probs.min()) / (probs.max() - probs.min())
+    norm_sims = (similarities - similarities.min()) / (similarities.max() - similarities.min())
+    
+    # Weighted average of normalized scores
+    alpha = 0.9  # Weight for model probabilities vs embedding similarities
+    scores = alpha * norm_probs + (1 - alpha) * norm_sims
+    
+    topk_indices = argsort(-scores, axis=0)[:k]
     return topk_indices.flatten().tolist()
 
 def handle_request(query_params):
@@ -78,7 +100,7 @@ def handle_request(query_params):
                 "body": response["error"]
             }
         query_embedding = array(response)
-        idxs = k_nearest(query_embedding, int(getenv('K_NEAREST')))
+        idxs = get_nearest_idxs(query_embedding, int(getenv('K_NEAREST')))
         results = [emoji_characters[idx] for idx in idxs]
         return {
             "statusCode": 200,
