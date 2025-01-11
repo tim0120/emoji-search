@@ -8,6 +8,11 @@ scripts/test2.py
 **/*.npy
 **/*.npz
 **/*.pt
+data/synthetic_generation_output.jsonl
 !data/embeddings/openai/**
 
 /.env
+
+.DS_Store
+
+wandb/
