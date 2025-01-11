@@ -2,8 +2,7 @@
 *.egg-info/
 *.pyc
 
-scripts/test.py
-scripts/test2.py
+scripts/test*.py
 
 data/embeddings/
 data/synthetic_generation_output.jsonl
