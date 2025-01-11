@@ -5,11 +5,8 @@
 scripts/test.py
 scripts/test2.py
 
-**/*.npy
-**/*.npz
-**/*.pt
-data/synthetic_generation_output.jsonl
-!data/embeddings/openai/**
+data/
+!data/deployment/**
 
 /.env
 
