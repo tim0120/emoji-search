@@ -5,10 +5,8 @@
 scripts/test.py
 scripts/test2.py
 
-data/
-!data/deployment/openai-unicodeNames-embeddings.npz
-!data/deployment/emoji_head.npz
-!data/deployment/characters.txt
+data/embeddings/
+data/synthetic_generation_output.jsonl
 
 /.env
 

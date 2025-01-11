@@ -1,4 +1,6 @@
-/*
+# Exclude everything
+*
+
 !api/
 !data/
 !vercel.json
@@ -6,10 +8,9 @@
 !setup.py
 
 # Restrict to specific files in allowed directories
-api/*
 !api/search.py
 
-data/*
+!data/deployment/
 !data/deployment/openai-unicodeNames-embeddings.npz
 !data/deployment/emoji_head.npz
 !data/deployment/characters.txt
