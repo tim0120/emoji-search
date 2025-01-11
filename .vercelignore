@@ -10,13 +10,7 @@ api/*
 !api/search.py
 
 data/*
-!data/embeddings/
-data/embeddings/*
-!data/embeddings/openai/
-data/embeddings/openai/*
-!data/embeddings/openai/text-embedding-3-small/
-data/embeddings/openai/text-embedding-3-small/*
-!data/embeddings/openai/text-embedding-3-small/unicodeNames.npz
+!data/deployment/*
 
 !data/emoji-info/
 data/emoji-info/*
